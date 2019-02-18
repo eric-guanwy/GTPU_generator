@@ -29,7 +29,7 @@ int main(int argc, char **argv)
 	int sockfd,udpfd,n;
 	
 	struct sockaddr_in servaddr,remoteaddr;
-	char line[1500];
+	//char line[65535];
 	void *sendbuffer,*recvbuffer;
 	sockfd = socket(AF_INET, SOCK_RAW, IPPROTO_UDP);
 
@@ -42,12 +42,12 @@ int main(int argc, char **argv)
 
 	for(;;)
 	{
-		recvbuffer = calloc(2000,sizeof(char));
-		bzero(&line, sizeof(line));
+		recvbuffer = calloc(65535,sizeof(char));
+		//bzero(&line, sizeof(line));
 		printf("before receive:\n");
-		n = recvfrom(sockfd, recvbuffer,2000, 0, NULL, NULL);
+		n = recvfrom(sockfd, recvbuffer,65535, 0, NULL, NULL);
 		printf("after receive: %d\n",n);
-		sendbuffer = calloc(2000,sizeof(char));
+		sendbuffer = calloc(65535,sizeof(char));
 		gtp_header* gtpuheader=calloc(1,sizeof(gtp_header));
 		gtpuheader->flag = 0x30;
 		gtpuheader->type = 255;
