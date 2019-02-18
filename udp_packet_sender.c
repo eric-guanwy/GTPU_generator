@@ -21,7 +21,7 @@ int main(int argc, char **argv)
 	int sendfd,recvfd;
 	struct sockaddr_in servaddr,local,cliaddr;
 	socklen_t cliaddrlen = sizeof(cliaddr);
-	char sendline[1500],recvline[1500];
+	char sendline[65535],recvline[65535];
 	if (argc != 2)
 	{
 		printf("usage: udp_packet_sender <IPaddress>\n");
@@ -37,13 +37,13 @@ int main(int argc, char **argv)
 	local.sin_addr.s_addr = htonl(INADDR_ANY);
 
 	sendfd = socket(AF_INET, SOCK_DGRAM, 0);
-	while (fgets(sendline, 1500, stdin) != NULL) {
+	while (fgets(sendline, 65535, stdin) != NULL) {
 		
 		sendto(sendfd, sendline, strlen(sendline), 0, (struct sockaddr*)&servaddr, sizeof(servaddr));
 		printf("packet send\n");
 		recvfd = socket(AF_INET, SOCK_DGRAM, 0);
 		bind(recvfd,(struct sockaddr*)&local,sizeof(local));	
-		recvfrom(recvfd,recvline,1500,0,(struct sockaddr*)&cliaddr, &cliaddrlen);
+		recvfrom(recvfd,recvline,65535,0,(struct sockaddr*)&cliaddr, &cliaddrlen);
 	}
 	exit(0);
 }
