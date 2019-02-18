@@ -29,7 +29,6 @@ int main(int argc, char **argv)
 	int sockfd,udpfd,n;
 	
 	struct sockaddr_in servaddr,remoteaddr;
-	//char line[65535];
 	void *sendbuffer,*recvbuffer;
 	sockfd = socket(AF_INET, SOCK_RAW, IPPROTO_UDP);
 
@@ -37,13 +36,11 @@ int main(int argc, char **argv)
 	servaddr.sin_family      = AF_INET;
 	servaddr.sin_addr.s_addr = htonl(INADDR_ANY);
 	servaddr.sin_port        = htons(5202);
+	printf("%d\n",setsockopt(sockfd,SOL_SOCKET,SO_BINDTODEVICE,"enp0s9",6));
 
-	bind(sockfd, (struct sockaddr*) &servaddr, sizeof(servaddr));
-
-	for(;;)
+	while(1)
 	{
 		recvbuffer = calloc(65535,sizeof(char));
-		//bzero(&line, sizeof(line));
 		printf("before receive:\n");
 		n = recvfrom(sockfd, recvbuffer,65535, 0, NULL, NULL);
 		printf("after receive: %d\n",n);
@@ -55,7 +52,7 @@ int main(int argc, char **argv)
 		gtpuheader->teid = htonl(0);
 		memcpy(sendbuffer,gtpuheader, sizeof(gtp_header));		
 		memcpy(sendbuffer+sizeof(gtp_header), recvbuffer, n);
-			
+
 		printf("after read and adding header:\n");
 		udpfd = socket(AF_INET, SOCK_DGRAM, 0);
 		bzero(&remoteaddr, sizeof(remoteaddr));
